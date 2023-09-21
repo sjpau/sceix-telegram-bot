@@ -22,6 +22,30 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
+async def validate_board_state(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if 'board' in context.chat_data.keys():
+        board = context.chat_data['board']
+        if board.is_check():
+            if board.is_checkmate():
+                text = ""
+                if chess.WHITE:
+                    text = "Black: Checkmate!"
+                else:
+                    text = "White: Checkmate!"
+                await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=text
+                )
+        else:
+            await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Check!"
+            )
+        if board.is_stalemate():
+            await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Stalemate!"
+            )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
@@ -46,9 +70,10 @@ async def board(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_chat.id,
             text=reply_text,
         )
+    await validate_board_state(update=update, context=context)
 
 async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if context.chat_data['board']:
+    if 'board' in context.chat_data.keys():
         move = update.message.text.split(' ')[1]
         if chess.Move.from_uci(move) in context.chat_data['board'].legal_moves:
             generate_board_image_with_pygame(board=context.chat_data['board'], move=move, path=BOARD_IMAGE_PATH)
@@ -63,6 +88,7 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_chat.id,
             text='Board not found!',
         )
+    await validate_board_state(update=update, context=context)
 
 
 def main() -> None:

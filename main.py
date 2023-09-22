@@ -90,7 +90,7 @@ def main() -> None:
     app = Application.builder().token(TOKEN).read_timeout(60).get_updates_read_timeout(60).get_updates_write_timeout(60).build()
 
     app.add_handler(CommandHandler('start', start))
-    app.add_handler(CommandHandler('newboard', newmatch))
+    app.add_handler(CommandHandler('newboard', newboard))
     app.add_handler(CommandHandler('board', board))
     app.add_handler(CommandHandler('move', move))
 

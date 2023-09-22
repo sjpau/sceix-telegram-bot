@@ -1,6 +1,7 @@
 ### Python ###
 secrets.py
 board.jpg
+generated/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
